@@ -68,7 +68,7 @@ def start_value(update: Update, context: CallbackContext):
             sleep(random.randint(10,25))
             continue
         except:
-            bot.send_message(chat_id='@ftb_feedbacks',text=f'Somthing is wrong...\n\nOutput:{req}')
+            bot.send_message(chat_id='@ftb_feedbacks',text=f'Somthing is wrong...\n\nOutput:{req.text}')
             sleep(random.randint(10,25))
             continue
 
