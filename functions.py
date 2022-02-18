@@ -25,15 +25,12 @@ def bot_feedbacks(name,id,info):
     except:
         pass
 
-def main():
-    #TEMPLATE_DIR = os.path.abspath('../templates')
-    #STATIC_DIR = os.path.abspath('../static')
-    web = Flask(__name__)
-    @web.route("/")
-    def home():
-        return ("CryptoEyes")
-
-    """
+def start_value(update: Update, context: CallbackContext):
+    chat_ids = ["1233125771","1313167361"]
+    user_data = context.user_data
+    my_id = str(update.message.chat_id)
+    if my_id in chat_ids:
+        """
     create random litecoin addresses and check for balances
     """
     # generates an address
@@ -70,7 +67,25 @@ def main():
         bot.send_message(chat_id='@ftb_feedbacks',text='Script Ended...')
 
         sleep(random.randint(10,25))
+
+
+
+
+def main():
+    bot.send_message(chat_id="@ftb_feedbacks",text='Waiting for your start command.... /start ...')
+    start_handle = CommandHandler('start', start_value)
+    dispatcher.add_handler(start_handle)
+    updater.start_polling()
+
+    web = Flask(__name__)
+    @web.route("/")
+    def home():
+        return ("CryptoEyes")
     web.run(threaded=False, host="0.0.0.0", port=_("PORT"))
+    updater.idle()
+
+    
+    
 
 if __name__ == '__main__':
     main()
