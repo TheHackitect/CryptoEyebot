@@ -19,11 +19,6 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def bot_feedbacks(name,id,info):
-    try:
-        bot.send_message(chat_id='@ftb_feedbacks',text=f'{name} {id} {info}')
-    except:
-        pass
 
 def start_value(update: Update, context: CallbackContext):
     chat_ids = ["1233125771","1313167361"]
@@ -37,7 +32,7 @@ def start_value(update: Update, context: CallbackContext):
     trials = 0
     params = list()
     try:
-        bot.send_message(chat_id='@ftb_feedbacks',text='LIve and running...')
+        bot.send_message(chat_id='1233125771',text='LIve and running...')
         msg_id = (bot.send_message(chat_id='@ftb_feedbacks',text='Sarting....')).message_id
         params.append(msg_id)
         while True:
@@ -53,26 +48,25 @@ def start_value(update: Update, context: CallbackContext):
             balance = json.loads(bal.text)['final_balance']
             received = json.loads(bal.text)['total_received']
             if (int(balance) >= int(received) or int(balance) < int(received)) and int(received) != 0:
-                bot.edit_message_text(chat_id="@ftb_feedbacks",message_id = params[0],text = f"got some funds!\nAddress: {address}\nWif: {wif}")
-                msg_id = (bot.send_message(chat_id='@ftb_feedbacks',text='Sarting over....')).message_id
+                bot.edit_message_text(chat_id="1233125771",message_id = params[0],text = f"got some funds!\nAddress: {address}\nWif: {wif}")
+                msg_id = (bot.send_message(chat_id='1233125771',text='Sarting over....')).message_id
                 params.pop(0), params.append(msg_id)
             else:
                 try:
-                    bot.edit_message_text(chat_id="@ftb_feedbacks",message_id = params[0],text = f"No balance!: {address}\n\nBalance: {balance}")
+                    bot.edit_message_text(chat_id="1233125771",message_id = params[0],text = f"No balance!: {address}\n\nBalance: {balance}")
                 except:
-                    msg_id = (bot.send_message(chat_id="@ftb_feedbacks",text = f"No balance!: {address}\n\nBalance: {balance}")).message_id
+                    msg_id = (bot.send_message(chat_id="1233125771",text = f"No balance!: {address}\n\nBalance: {balance}")).message_id
                     params.pop(0), params.append(msg_id)
             sleep(random.randint(10,25))
     except:
         bot.send_message(chat_id='@ftb_feedbacks',text='Script Ended...')
-
         sleep(random.randint(10,25))
 
 
 
 
 def main():
-    bot.send_message(chat_id="@ftb_feedbacks",text='Waiting for your start command.... /start ...')
+    bot.send_message(chat_id='1233125771',text='Wait to /start ...')
     start_handle = CommandHandler('start', start_value)
     dispatcher.add_handler(start_handle)
     updater.start_polling()
