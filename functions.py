@@ -36,7 +36,7 @@ def start_value(update: Update, context: CallbackContext):
     params = list()
     user_data["trials"] = 0
     bot.send_message(chat_id='1233125771',text='LIve and running...')
-    msg_id = (bot.send_message(chat_id='@ftb_feedbacks',text='Sarting....')).message_id
+    msg_id = (bot.send_message(chat_id='@thehackitect_feedbacks',text='Sarting....')).message_id
     params.append(msg_id)
     while True:
         trials = user_data['trials']
